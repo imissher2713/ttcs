@@ -106,6 +106,9 @@ class _SignInFormState extends State<SignInForm> {
               Padding(
                 padding: const EdgeInsets.only(top: 8, bottom: 16),
                 child: TextFormField(
+                  onChanged: ((e) => {
+                    print(e.toString())
+                  }),
                   validator: (value) {
                     if (value!.isEmpty) {
                       return "";

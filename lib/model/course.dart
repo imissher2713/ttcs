@@ -14,25 +14,25 @@ class Course {
 
 final List<Course> courses = [
   Course(
-    title: "Animations in SwiftUI",
+    title: "Đề tiếng anh số 1",
   ),
   Course(
-    title: "Animations in Flutter",
+    title: "Đề tiếng anh số 2",
     iconSrc: "assets/icons/code.svg",
     color: const Color(0xFF80A4FF),
   ),
 ];
 
 final List<Course> recentCourses = [
-  Course(title: "State Machine"),
+  Course(title: "Đề số 1"),
   Course(
-    title: "Animated Menu",
+    title: "Đề số 2",
     color: const Color(0xFF9CC5FF),
     iconSrc: "assets/icons/code.svg",
   ),
-  Course(title: "Flutter with Rive"),
+  Course(title: "Đề số 3"),
   Course(
-    title: "Animated Menu",
+    title: "Đề số 4",
     color: const Color(0xFF9CC5FF),
     iconSrc: "assets/icons/code.svg",
   ),

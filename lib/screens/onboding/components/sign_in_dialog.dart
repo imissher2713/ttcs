@@ -40,6 +40,7 @@ void showCustomDialog(BuildContext context, {required ValueChanged onValue}) {
                 SingleChildScrollView(
                   child: Column(
                     children: [
+                      // Text sign in
                       const Text(
                         "Sign in",
                         style: TextStyle(
@@ -48,13 +49,15 @@ void showCustomDialog(BuildContext context, {required ValueChanged onValue}) {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
+                      //Text description
                       const Padding(
                         padding: EdgeInsets.symmetric(vertical: 16),
                         child: Text(
-                          "Access to 240+ hours of content. Learn design and code, by building real apps with Flutter and Swift.",
+                          "Thực tập cơ sở ",
                           textAlign: TextAlign.center,
                         ),
                       ),
+                      // Email, Password and button sign in
                       const SignInForm(),
                       const Row(
                         children: [
@@ -82,7 +85,7 @@ void showCustomDialog(BuildContext context, {required ValueChanged onValue}) {
                         ),
                       ),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           IconButton(
                             onPressed: () {},
@@ -103,7 +106,9 @@ void showCustomDialog(BuildContext context, {required ValueChanged onValue}) {
                             ),
                           ),
                           IconButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              print("Hello world");
+                            },
                             padding: EdgeInsets.zero,
                             icon: SvgPicture.asset(
                               "assets/icons/google_box.svg",
