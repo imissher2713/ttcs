@@ -132,8 +132,9 @@ class _EntryPointState extends State<EntryPoint>
           ),
         ],
       ),
-      bottomNavigationBar: Transform.translate(
-        offset: Offset(0, 100 * animation.value),
+      mNavigationBar: Transform.translate(
+          // Vị trí thanh botton navbar
+          offset: Offset(0, 0),botto
         child: SafeArea(
           child: Container(
             padding:
@@ -160,8 +161,12 @@ class _EntryPointState extends State<EntryPoint>
                     return BtmNavItem(
                       navBar: navBar,
                       press: () {
+                        if(navBar.title == "Search") {
+                          Navigator.pushNamed(context, '/search');
+                        }
+
                         RiveUtils.chnageSMIBoolState(navBar.rive.status!);
-                        updateSelectedBtmNav(navBar);
+                        updateSelectedBtmNav(navBar); // Chỉ định thằng được chọn
                       },
                       riveOnInit: (artboard) {
                         navBar.rive.status = RiveUtils.getRiveInput(artboard,

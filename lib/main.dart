@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:rive_animation/Search.dart';
 import 'package:rive_animation/screens/onboding/onboding_screen.dart';
+
+import 'button.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,7 +15,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'The Flutter Way',
+      initialRoute: '/',
+      routes: <String, WidgetBuilder>{
+        '/button': (context) => Button(),
+        '/search': (context) => Search()
+      },
+      title: 'App Tiếng Anh',
       theme: ThemeData(
         scaffoldBackgroundColor: const Color(0xFFEEF1F8),
         primarySwatch: Colors.blue,
@@ -26,7 +34,7 @@ class MyApp extends StatelessWidget {
           errorStyle: TextStyle(height: 0),
           border: defaultInputBorder,
           enabledBorder: defaultInputBorder,
-          focusedBorder: defaultInputBorder,
+          focusedBorder: defaultInputBorder ,
           errorBorder: defaultInputBorder,
         ),
       ),

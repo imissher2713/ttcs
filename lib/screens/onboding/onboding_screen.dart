@@ -58,7 +58,7 @@ class _OnbodingScreenState extends State<OnbodingScreen> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const Spacer(),
                     const SizedBox(

@@ -25,23 +25,31 @@ class HomePage extends StatelessWidget {
                       color: Colors.black, fontWeight: FontWeight.bold),
                 ),
               ),
+              // Đây là thanh scroll ngang
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: courses
                       .map(
-                        (course) => Padding(
-                          padding: const EdgeInsets.only(left: 20),
-                          child: CourseCard(
-                            title: course.title,
-                            iconSrc: course.iconSrc,
-                            color: course.color,
+                        (course) => GestureDetector(
+                          onTap: () => {
+                            Navigator.pushNamed(context, '/button')
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 20),
+                            child: CourseCard(
+                              title: course.title,
+                              iconSrc: course.iconSrc,
+                              color: course.color,
+                            ),
                           ),
                         ),
                       )
                       .toList(),
                 ),
               ),
+
+              // Đây là thanh scroll dọc
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: Text(
@@ -50,15 +58,20 @@ class HomePage extends StatelessWidget {
                       color: Colors.black, fontWeight: FontWeight.bold),
                 ),
               ),
-              ...recentCourses.map((course) => Padding(
-                    padding:
-                        const EdgeInsets.only(left: 20, right: 20, bottom: 20),
-                    child: SecondaryCourseCard(
-                      title: course.title,
-                      iconsSrc: course.iconSrc,
-                      colorl: course.color,
+              ...recentCourses.map((course) => GestureDetector(
+                onTap: () => {
+                  Navigator.pushNamed(context, '/button')
+                },
+                child: Padding(
+                      padding:
+                          const EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                      child: SecondaryCourseCard(
+                        title: course.title,
+                        iconsSrc: course.iconSrc,
+                        colorl: course.color,
+                      ),
                     ),
-                  )),
+              )),
             ],
           ),
         ),

@@ -50,21 +50,7 @@ class CourseCard extends StatelessWidget {
                       color: Colors.white38,
                     ),
                   ),
-                  const Spacer(),
-                  Row(
-                    children: List.generate(
-                      3,
-                      (index) => Transform.translate(
-                        offset: Offset((-10 * index).toDouble(), 0),
-                        child: CircleAvatar(
-                          radius: 20,
-                          backgroundImage: AssetImage(
-                            "assets/avaters/Avatar ${index + 1}.jpg",
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                  const Spacer()
                 ],
               ),
             ),

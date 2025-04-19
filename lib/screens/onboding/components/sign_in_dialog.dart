@@ -40,6 +40,7 @@ void showCustomDialog(BuildContext context, {required ValueChanged onValue}) {
                 SingleChildScrollView(
                   child: Column(
                     children: [
+                      SizedBox(height: 30),
                       // Text sign in
                       const Text(
                         "Sign in",
@@ -50,13 +51,6 @@ void showCustomDialog(BuildContext context, {required ValueChanged onValue}) {
                         ),
                       ),
                       //Text description
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 16),
-                        child: Text(
-                          "Thực tập cơ sở ",
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
                       // Email, Password and button sign in
                       const SignInForm(),
                       const Row(

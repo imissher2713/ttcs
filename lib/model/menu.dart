@@ -23,14 +23,14 @@ List<Menu> sidebarMenus = [
         stateMachineName: "SEARCH_Interactivity"),
   ),
   Menu(
-    title: "Favorites",
+    title: "Learn",
     rive: RiveModel(
         src: "assets/RiveAssets/icons.riv",
         artboard: "LIKE/STAR",
         stateMachineName: "STAR_Interactivity"),
   ),
   Menu(
-    title: "Help",
+    title: "Chat",
     rive: RiveModel(
         src: "assets/RiveAssets/icons.riv",
         artboard: "CHAT",
@@ -56,6 +56,7 @@ List<Menu> sidebarMenus2 = [
 
 List<Menu> bottomNavItems = [
   Menu(
+
     title: "Chat",
     rive: RiveModel(
         src: "assets/RiveAssets/icons.riv",
