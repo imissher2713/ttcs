@@ -33,7 +33,6 @@ class HomePage extends StatelessWidget {
                       .map(
                         (course) => GestureDetector(
                           onTap: () => {
-                            Navigator.pushNamed(context, '/button')
                           },
                           child: Padding(
                             padding: const EdgeInsets.only(left: 20),
@@ -60,7 +59,6 @@ class HomePage extends StatelessWidget {
               ),
               ...recentCourses.map((course) => GestureDetector(
                 onTap: () => {
-                  Navigator.pushNamed(context, '/button')
                 },
                 child: Padding(
                       padding:

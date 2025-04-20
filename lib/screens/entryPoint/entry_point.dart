@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:rive/rive.dart';
 import 'package:rive_animation/constants.dart';
+import 'package:rive_animation/screens/Component_screen/notification_screen.dart';
+import 'package:rive_animation/screens/Component_screen/profile_screen.dart';
 import 'package:rive_animation/screens/home/home_screen.dart';
 import 'package:rive_animation/utils/rive_utils.dart';
 
@@ -11,8 +13,10 @@ import 'components/btm_nav_item.dart';
 import 'components/menu_btn.dart';
 import 'components/side_bar.dart';
 
+const List<Widget> list = [HomePage(), Stack(), Stack(), NotificationScreen(), ProfileScreen()];
 class EntryPoint extends StatefulWidget {
   const EntryPoint({super.key});
+
 
   @override
   State<EntryPoint> createState() => _EntryPointState();
@@ -26,6 +30,7 @@ class _EntryPointState extends State<EntryPoint>
   Menu selectedSideMenu = sidebarMenus.first;
 
   late SMIBool isMenuOpenInput;
+  int selected = 0;
 
   void updateSelectedBtmNav(Menu menu) {
     if (selectedBottonNav != menu) {
@@ -88,53 +93,53 @@ class _EntryPointState extends State<EntryPoint>
               offset: Offset(animation.value * 265, 0),
               child: Transform.scale(
                 scale: scalAnimation.value,
-                child: const ClipRRect(
-                  borderRadius: BorderRadius.all(
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.all(
                     Radius.circular(24),
                   ),
-                  child: HomePage(),
+                  child: list[selected],
                 ),
               ),
             ),
           ),
-          AnimatedPositioned(
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.fastOutSlowIn,
-            left: isSideBarOpen ? 220 : 0,
-            top: 16,
-            child: MenuBtn(
-              press: () {
-                isMenuOpenInput.value = !isMenuOpenInput.value;
-
-                if (_animationController.value == 0) {
-                  _animationController.forward();
-                } else {
-                  _animationController.reverse();
-                }
-
-                setState(
-                  () {
-                    isSideBarOpen = !isSideBarOpen;
-                  },
-                );
-              },
-              riveOnInit: (artboard) {
-                final controller = StateMachineController.fromArtboard(
-                    artboard, "State Machine");
-
-                artboard.addController(controller!);
-
-                isMenuOpenInput =
-                    controller.findInput<bool>("isOpen") as SMIBool;
-                isMenuOpenInput.value = true;
-              },
-            ),
-          ),
+          // AnimatedPositioned(
+          //   duration: const Duration(milliseconds: 200),
+          //   curve: Curves.fastOutSlowIn,
+          //   left: isSideBarOpen ? 220 : 0,
+          //   top: 16,
+          //   child: MenuBtn(
+          //     press: () {
+          //       isMenuOpenInput.value = !isMenuOpenInput.value;
+          //
+          //       if (_animationController.value == 0) {
+          //         _animationController.forward();
+          //       } else {
+          //         _animationController.reverse();
+          //       }
+          //
+          //       setState(
+          //         () {
+          //           isSideBarOpen = !isSideBarOpen;
+          //         },
+          //       );
+          //     },
+          //     riveOnInit: (artboard) {
+          //       final controller = StateMachineController.fromArtboard(
+          //           artboard, "State Machine");
+          //
+          //       artboard.addController(controller!);
+          //
+          //       isMenuOpenInput =
+          //           controller.findInput<bool>("isOpen") as SMIBool;
+          //       isMenuOpenInput.value = true;
+          //     },
+          //   ),
+          // ),
         ],
       ),
-      mNavigationBar: Transform.translate(
-          // Vị trí thanh botton navbar
-          offset: Offset(0, 0),botto
+      bottomNavigationBar: Transform.translate(
+        // Vị trí thanh botton navbar
+        offset: const Offset(0, 10),
         child: SafeArea(
           child: Container(
             padding:
@@ -161,10 +166,9 @@ class _EntryPointState extends State<EntryPoint>
                     return BtmNavItem(
                       navBar: navBar,
                       press: () {
-                        if(navBar.title == "Search") {
-                          Navigator.pushNamed(context, '/search');
-                        }
-
+                        setState(() {
+                          selected = index;
+                        });
                         RiveUtils.chnageSMIBoolState(navBar.rive.status!);
                         updateSelectedBtmNav(navBar); // Chỉ định thằng được chọn
                       },
