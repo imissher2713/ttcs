@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:rive/rive.dart';
 import 'package:rive_animation/screens/entryPoint/entry_point.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'sign_up_form.dart'; // Import màn hình SignUpForm
 
 class SignInForm extends StatefulWidget {
   const SignInForm({
@@ -15,17 +19,20 @@ class SignInForm extends StatefulWidget {
 
 class _SignInFormState extends State<SignInForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _storage = FlutterSecureStorage();
   bool isShowLoading = false;
   bool isShowConfetti = false;
   late SMITrigger error;
   late SMITrigger success;
   late SMITrigger reset;
-
   late SMITrigger confetti;
+  String _errorMessage = '';
 
   void _onCheckRiveInit(Artboard artboard) {
     StateMachineController? controller =
-        StateMachineController.fromArtboard(artboard, 'State Machine 1');
+    StateMachineController.fromArtboard(artboard, 'State Machine 1');
 
     artboard.addController(controller!);
     error = controller.findInput<bool>('Error') as SMITrigger;
@@ -35,57 +42,83 @@ class _SignInFormState extends State<SignInForm> {
 
   void _onConfettiRiveInit(Artboard artboard) {
     StateMachineController? controller =
-        StateMachineController.fromArtboard(artboard, "State Machine 1");
+    StateMachineController.fromArtboard(artboard, "State Machine 1");
     artboard.addController(controller!);
 
     confetti = controller.findInput<bool>("Trigger explosion") as SMITrigger;
   }
 
-  void singIn(BuildContext context) {
-    // confetti.fire();
-    setState(() {
-      isShowConfetti = true;
-      isShowLoading = true;
-    });
-    Future.delayed(
-      const Duration(seconds: 1),
-      () {
-        if (_formKey.currentState!.validate()) {
+  Future<void> signIn(BuildContext context) async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        isShowLoading = true;
+        isShowConfetti = false;
+        _errorMessage = '';
+      });
+
+      try {
+        final response = await http.post(
+          Uri.parse('http://localhost:3000/api/login'),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'email': _emailController.text.trim(),
+            'password': _passwordController.text.trim(),
+          }),
+        );
+
+        if (response.statusCode == 200) {
+          final data = jsonDecode(response.body);
+          await _storage.write(key: 'jwt_token', value: data['token']);
           success.fire();
-          Future.delayed(
-            const Duration(seconds: 2),
-            () {
-              setState(() {
-                isShowLoading = false;
-              });
-              confetti.fire();
-              // Navigate & hide confetti
-              Future.delayed(const Duration(seconds: 1), () {
-                // Navigator.pop(context);
-                if (!context.mounted) return;
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const EntryPoint(),
-                  ),
-                );
-              });
-            },
-          );
+          Future.delayed(const Duration(seconds: 2), () {
+            setState(() {
+              isShowLoading = false;
+              isShowConfetti = true;
+            });
+            confetti.fire();
+            Future.delayed(const Duration(seconds: 1), () {
+              if (!context.mounted) return;
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const EntryPoint(),
+                ),
+              );
+            });
+          });
         } else {
+          setState(() {
+            _errorMessage = 'Invalid credentials';
+          });
           error.fire();
-          Future.delayed(
-            const Duration(seconds: 2),
-            () {
-              setState(() {
-                isShowLoading = false;
-              });
-              reset.fire();
-            },
-          );
+          Future.delayed(const Duration(seconds: 2), () {
+            setState(() {
+              isShowLoading = false;
+            });
+            reset.fire();
+          });
         }
-      },
-    );
+      } catch (e) {
+        setState(() {
+          _errorMessage = 'Error: $e';
+        });
+        error.fire();
+        Future.delayed(const Duration(seconds: 2), () {
+          setState(() {
+            isShowLoading = false;
+          });
+          reset.fire();
+        });
+      }
+    } else {
+      error.fire();
+      Future.delayed(const Duration(seconds: 2), () {
+        setState(() {
+          isShowLoading = false;
+        });
+        reset.fire();
+      });
+    }
   }
 
   @override
@@ -106,9 +139,7 @@ class _SignInFormState extends State<SignInForm> {
               Padding(
                 padding: const EdgeInsets.only(top: 8, bottom: 16),
                 child: TextFormField(
-                  onChanged: ((e) => {
-                    print(e.toString())
-                  }),
+                  controller: _emailController,
                   validator: (value) {
                     if (value!.isEmpty) {
                       return "";
@@ -134,6 +165,7 @@ class _SignInFormState extends State<SignInForm> {
               Padding(
                 padding: const EdgeInsets.only(top: 8, bottom: 16),
                 child: TextFormField(
+                  controller: _passwordController,
                   obscureText: true,
                   validator: (value) {
                     if (value!.isEmpty) {
@@ -149,11 +181,19 @@ class _SignInFormState extends State<SignInForm> {
                   ),
                 ),
               ),
+              if (_errorMessage.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: Text(
+                    _errorMessage,
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                ),
               Padding(
-                padding: const EdgeInsets.only(top: 8, bottom: 24),
+                padding: const EdgeInsets.only(top: 8, bottom: 16),
                 child: ElevatedButton.icon(
                   onPressed: () {
-                    singIn(context);
+                    signIn(context);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFF77D8E),
@@ -174,27 +214,103 @@ class _SignInFormState extends State<SignInForm> {
                   label: const Text("Sign In"),
                 ),
               ),
+              const Center(
+                child: Text(
+                  "OR",
+                  style: TextStyle(color: Colors.black54),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Nút Email (điều hướng đến SignUpForm)
+                  IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SignUpForm(),
+                        ),
+                      );
+                    },
+                    icon: SvgPicture.asset(
+                      "assets/icons/email.svg",
+                      height: 24,
+                      width: 24,
+                    ),
+                    style: IconButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      shape: const CircleBorder(
+                        side: BorderSide(color: Colors.black12),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  // Nút Apple (chưa xử lý)
+                  IconButton(
+                    onPressed: () {
+                      // TODO: Xử lý đăng ký/đăng nhập bằng Apple
+                    },
+                    icon: const Icon(
+                      Icons.apple,
+                      size: 24,
+                    ),
+                    style: IconButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      shape: const CircleBorder(
+                        side: BorderSide(color: Colors.black12),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  // Nút Google (chưa xử lý)
+                  IconButton(
+                    onPressed: () {
+                      // TODO: Xử lý đăng ký/đăng nhập bằng Google
+                    },
+                    icon: SvgPicture.asset(
+                      "assets/icons/google.svg", // Đảm bảo bạn có file google.svg
+                      height: 24,
+                      width: 24,
+                    ),
+                    style: IconButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      shape: const CircleBorder(
+                        side: BorderSide(color: Colors.black12),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              const Center(
+                child: Text(
+                  "Sign up with Email, Apple or Google",
+                  style: TextStyle(color: Colors.black54),
+                ),
+              ),
             ],
           ),
         ),
         isShowLoading
             ? CustomPositioned(
-                child: RiveAnimation.asset(
-                  'assets/RiveAssets/check.riv',
-                  fit: BoxFit.cover,
-                  onInit: _onCheckRiveInit,
-                ),
-              )
+          child: RiveAnimation.asset(
+            'assets/RiveAssets/check.riv',
+            fit: BoxFit.cover,
+            onInit: _onCheckRiveInit,
+          ),
+        )
             : const SizedBox(),
         isShowConfetti
             ? CustomPositioned(
-                scale: 6,
-                child: RiveAnimation.asset(
-                  "assets/RiveAssets/confetti.riv",
-                  onInit: _onConfettiRiveInit,
-                  fit: BoxFit.cover,
-                ),
-              )
+          scale: 6,
+          child: RiveAnimation.asset(
+            "assets/RiveAssets/confetti.riv",
+            onInit: _onConfettiRiveInit,
+            fit: BoxFit.cover,
+          ),
+        )
             : const SizedBox(),
       ],
     );
