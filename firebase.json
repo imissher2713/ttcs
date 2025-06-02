@@ -1,0 +1,21 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "toeic-app-flutter",
+          "appId": "1:546046472911:android:d48cc8bf366ef18762fdba",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "toeic-app-flutter",
+          "configurations": {
+            "android": "1:546046472911:android:d48cc8bf366ef18762fdba"
+          }
+        }
+      }
+    }
+  }
+}
